@@ -13,6 +13,22 @@ function initializeSymbolMapping() {
     });
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    initializeGame();
+    checkLocalStorage();
+});
+
+function initializeGame() {
+    if (!localStorage.getItem('gameCompleted') || isNewDay()) {
+        localStorage.removeItem('gameCompleted');
+        localStorage.removeItem('attempts');
+        setupGame();
+    } else {
+        let attempts = localStorage.getItem('attempts');
+        showCongratulations(attempts);
+    }
+}
+
 function displaySentence() {
     const gameBoard = document.getElementById('gameBoard');
     gameBoard.innerHTML = '';
@@ -72,9 +88,24 @@ function checkGuess() {
     });
 
     if (allCorrect) {
+        attempts++;
+        localStorage.setItem('gameCompleted', true);
+        localStorage.setItem('attempts', attempts);
         showCongratulations(attempts);
     }
 }
+
+function isNewDay() {
+    const lastPlayed = localStorage.getItem('lastPlayed');
+    const today = new Date().toDateString();
+
+    if (!lastPlayed || lastPlayed !== today) {
+        localStorage.setItem('lastPlayed', today);
+        return true;
+    }
+    return false;
+}
+
 function showCongratulations(attempts) {
     const timeUntilMidnight = getTimeUntilMidnight();
     const message = `Congratulations! You solved the Linguistic in ${attempts} tries! Come back in ${timeUntilMidnight}.`;
