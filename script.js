@@ -14,18 +14,19 @@ function initializeSymbolMapping() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    initializeGame();
-    checkLocalStorage();
+    if (isNewDay()) {
+        clearGameData();
+    } else {
+        initializeGame();
+    }
 });
 
 function initializeGame() {
-    if (!localStorage.getItem('gameCompleted') || isNewDay()) {
-        localStorage.removeItem('gameCompleted');
-        localStorage.removeItem('attempts');
-        setupGame();
-    } else {
+    if (localStorage.getItem('gameCompleted') === 'true') {
         let attempts = localStorage.getItem('attempts');
         showCongratulations(attempts);
+    } else {
+        setupGame();
     }
 }
 
@@ -65,15 +66,9 @@ function displaySentence() {
 }
 
 function checkGuess() {
-    const inputs = document.querySelectorAll('.guess-input');
-    attempts++;
-    let allFilled = Array.from(inputs).every(input => input.value.trim() !== '');
     let allCorrect = true;
-
-    if (!allFilled) {
-        alert('Please fill in all fields before checking.');
-        return;
-    }
+    const inputs = document.querySelectorAll('.guess-input');
+    let attempts = parseInt(localStorage.getItem('attempts') || '0');
 
     inputs.forEach((input, index) => {
         const guessedChar = input.value.trim().toLowerCase();
@@ -89,9 +84,11 @@ function checkGuess() {
 
     if (allCorrect) {
         attempts++;
-        localStorage.setItem('gameCompleted', true);
-        localStorage.setItem('attempts', attempts);
+        localStorage.setItem('gameCompleted', 'true');
+        localStorage.setItem('attempts', attempts.toString());
         showCongratulations(attempts);
+    } else {
+        localStorage.setItem('attempts', attempts.toString());
     }
 }
 
@@ -99,8 +96,7 @@ function isNewDay() {
     const lastPlayed = localStorage.getItem('lastPlayed');
     const today = new Date().toDateString();
 
-    if (!lastPlayed || lastPlayed !== today) {
-        localStorage.setItem('lastPlayed', today);
+    if (lastPlayed !== today) {
         return true;
     }
     return false;
@@ -151,11 +147,17 @@ function getTimeUntilMidnight() {
     return `${hours.toString().padStart(2, '0')} hours:${minutes.toString().padStart(2, '0')} minutes`;
 }
 
+function clearGameData() {
+    localStorage.removeItem('gameCompleted');
+    localStorage.removeItem('attempts');
+    localStorage.removeItem('lastPlayed');
+    setupGame();
+}
 
 function setupGame() {
     currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
-    initializeSymbolMapping();
     displaySentence();
+    localStorage.setItem('lastPlayed', new Date().toDateString());
 }
 
 document.getElementById('checkButton').addEventListener('mousedown', function() {
