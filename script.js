@@ -156,6 +156,7 @@ function clearGameData() {
 
 function setupGame() {
     currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
+    initializeSymbolMapping();
     displaySentence();
     localStorage.setItem('lastPlayed', new Date().toDateString());
 }
