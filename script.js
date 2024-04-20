@@ -1,5 +1,5 @@
 const sentences = [
-"Dunkin donuts."
+"Ninety nine bottles of beer on the wall."
 ];
 const symbols = Array.from({length: 26}, (_, i) => `symbols/${i + 1}.svg`);
 let currentSentence = '';
