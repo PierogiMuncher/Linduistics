@@ -112,14 +112,14 @@ img.symbol {
     border-radius: 25px;
 }
 
-.title-container {
-    width: 20%; /* Ensures the container spans the full width of the page */
-    text-align: center; /* Centers the image within the container */
-    padding: 20px 0; /* Adds some padding above and below the image */
-    position: fixed; /* Keeps the title at the top even when scrolling */
-    top: 0;
-    left: 0;
-    z-index: 1000; /* Ensures it's on top of other content */
-    background-color: #ffffff00; /* Optional: adds a background color */
-}
+/* .title-container {
+ /*   width: 20%; /* Ensures the container spans the full width of the page */
+ /*   text-align: center; /* Centers the image within the container */
+ /*   padding: 20px 0; /* Adds some padding above and below the image */
+ /*   position: fixed; /* Keeps the title at the top even when scrolling */
+ /*   top: 0;
+ /*   left: 0;
+ /*   z-index: 1000; /* Ensures it's on top of other content */
+ /*   background-color: #ffffff00; /* Optional: adds a background color */
+/* }
 
