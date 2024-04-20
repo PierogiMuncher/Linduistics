@@ -120,6 +120,6 @@ img.symbol {
     top: 0;
     left: 0;
     z-index: 1000; /* Ensures it's on top of other content */
-    background-color: #fff; /* Optional: adds a background color */
+    background-color: #ffffff00; /* Optional: adds a background color */
 }
 
