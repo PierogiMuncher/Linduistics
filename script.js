@@ -48,6 +48,8 @@ function displaySentence() {
         wordBox.style.display = 'inline-block';
         wordBox.style.padding = '5px';
 
+        const inputs = []; // Store references to input elements
+
         word.split('').forEach(char => {
             const symbolContainer = document.createElement('div');
             symbolContainer.className = 'symbol-container';
@@ -64,9 +66,19 @@ function displaySentence() {
             symbolContainer.appendChild(img);
             symbolContainer.appendChild(input);
             wordBox.appendChild(symbolContainer);
+            inputs.push(input);
         });
 
         gameBoard.appendChild(wordBox);
+
+        // Set up the input focus movement
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                if (input.value && index < inputs.length - 1) {
+                    inputs[index + 1].focus(); // Move focus to next input
+                }
+            });
+        });
     });
 }
 
@@ -83,6 +95,7 @@ function checkGuess() {
 
         if (guessedChar === correctChar) {
             input.style.backgroundColor = 'pink';
+            input.disabled = true; // Lock the input box if correct
         } else {
             input.style.backgroundColor = '';
             allCorrect = false;
