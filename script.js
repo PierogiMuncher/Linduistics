@@ -190,6 +190,8 @@ function setupGame() {
 
 document.getElementById('checkButton').addEventListener('mousedown', function() {
     this.children[0].src = 'ButtonDown.svg';  // Change to the "pressed" image
+    // Play the button press sound
+    document.getElementById('buttonPressAudio').play();
 });
 
 document.getElementById('checkButton').addEventListener('mouseup', function() {
