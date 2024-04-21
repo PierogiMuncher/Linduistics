@@ -5,6 +5,7 @@ const symbols = Array.from({length: 26}, (_, i) => `symbols/${i + 1}.svg`);
 let currentSentence = '';
 let attempts = 0;
 let symbolMapping = {};
+let tries = 0;
 
 function initializeSymbolMapping() {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
@@ -66,6 +67,7 @@ function displaySentence() {
 }
 
 function checkGuess() {
+    tries++;
     let allCorrect = true;
     const inputs = document.querySelectorAll('.guess-input');
     let attempts = parseInt(localStorage.getItem('attempts') || '0');
@@ -104,7 +106,7 @@ function isNewDay() {
 
 function showCongratulations(attempts) {
     const timeUntilMidnight = getTimeUntilMidnight();
-    const message = `Congratulations! You solved the Linguistic in ${attempts} tries! Come back in ${timeUntilMidnight}.`;
+    const message = `Congratulations! You solved the Linguistic in ${tries} tries! Come back in ${timeUntilMidnight}.`;
 
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
@@ -114,7 +116,7 @@ function showCongratulations(attempts) {
 
     // Creating the message text with a line break
     const messageText = document.createElement('span');
-    messageText.innerHTML = `Congratulations!<br>You solved the Linduistic in ${attempts} attempt(s)!<br>Come back in ${timeUntilMidnight}.<br>`;
+    messageText.innerHTML = `Congratulations!<br>You solved the Linduistic in ${tries} attempt(s)!<br>Come back in ${timeUntilMidnight}.<br>`;
 
     const shareButton = document.createElement('button');
     shareButton.innerText = 'Share';
