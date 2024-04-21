@@ -217,6 +217,7 @@ function pressButton() {
 // Function to revert to the "unpressed" image
 function releaseButton() {
     buttonImage.src = 'ButtonUp.svg';
+    checkGuess();
 }
 
 // Add mouse event listeners
