@@ -23,9 +23,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeGame() {
-    if (localStorage.getItem('gameCompleted') === 'true') {
-        let attempts = localStorage.getItem('attempts');
-        showCongratulations(attempts);
+    if (localStorage.getItem('gameCompleted') === 'true' || localStorage.getItem('gameLocked') === 'true') {
+        let attempts = localStorage.getItem('tries');
+        if (localStorage.getItem('gameCompleted') === 'true') {
+            showCongratulations(attempts);
+        } else {
+            showFailureMessage();
+        }
     } else {
         setupGame();
     }
@@ -67,6 +71,7 @@ function displaySentence() {
 }
 
 function checkGuess() {
+    let tries = parseInt(localStorage.getItem('tries') || '0');
     tries++;
     let allCorrect = true;
     const inputs = document.querySelectorAll('.guess-input');
@@ -84,14 +89,34 @@ function checkGuess() {
         }
     });
 
+    localStorage.setItem('tries', tries.toString());
+
     if (allCorrect) {
         attempts++;
         localStorage.setItem('gameCompleted', 'true');
         localStorage.setItem('attempts', attempts.toString());
         showCongratulations(attempts);
+    } else if (tries >= 5) {
+        showFailureMessage();
     } else {
         localStorage.setItem('attempts', attempts.toString());
     }
+}
+
+function showFailureMessage() {
+    const message = `You did not solve the Linduistic today! Answer was: ${currentSentence}`;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+
+    const messageBox = document.createElement('div');
+    messageBox.className = 'message-box';
+    messageBox.innerHTML = `<span>${message}<br>Come back tomorrow!</span>`;
+
+    overlay.appendChild(messageBox);
+    document.body.appendChild(overlay);
+
+    localStorage.setItem('gameLocked', 'true');
 }
 
 function isNewDay() {
