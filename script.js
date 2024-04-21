@@ -160,7 +160,7 @@ function showCongratulations(attempts) {
     shareButton.innerText = 'Share';
     shareButton.className = 'share-button';
     shareButton.onclick = function() {
-        const shareText = `I just solved the Linduistic in ${attempts} attempt(s)! 💖 Try it yourself: https://pierogimuncher.github.io/Linduistics/`;
+        const shareText = `I just solved the Linduistic in ${attempts} attempt(s)! 💖 Try it yourself: www.linduistics.com`;
         if (navigator.share) {
             navigator.share({
                 title: 'My Linduistic Achievement',
