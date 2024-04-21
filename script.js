@@ -203,4 +203,42 @@ document.getElementById('checkButton').addEventListener('mouseleave', function()
 });
 
 
+
+
+const checkButton = document.getElementById('checkButton');
+const buttonImage = checkButton.children[0]; // assuming the image is the first child
+
+// Function to change to the "pressed" image
+function pressButton() {
+    buttonImage.src = 'ButtonDown.svg';
+    document.getElementById('buttonPressAudio').play();  // Play the button press sound
+}
+
+// Function to revert to the "unpressed" image
+function releaseButton() {
+    buttonImage.src = 'ButtonUp.svg';
+}
+
+// Add mouse event listeners
+checkButton.addEventListener('mousedown', pressButton);
+checkButton.addEventListener('mouseup', releaseButton);
+checkButton.addEventListener('mouseleave', releaseButton);
+
+// Add touch event listeners for mobile devices
+checkButton.addEventListener('touchstart', function(event) {
+    event.preventDefault(); // Prevents the mouse event from also being fired
+    pressButton();
+});
+
+checkButton.addEventListener('touchend', function(event) {
+    event.preventDefault(); // Prevents the mouse event from also being fired
+    releaseButton();
+});
+
+checkButton.addEventListener('touchcancel', function(event) {
+    event.preventDefault(); // Prevents the mouse event from also being fired
+    releaseButton();
+});
+
+
 window.onload = setupGame;
