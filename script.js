@@ -80,8 +80,6 @@ function checkGuess() {
             input.style.backgroundColor = '';
             allCorrect = false;
         }
-
-        tries++;
     });
 
     if (allCorrect) {
@@ -106,7 +104,7 @@ function isNewDay() {
 
 function showCongratulations(attempts) {
     const timeUntilMidnight = getTimeUntilMidnight();
-    const message = `Congratulations! You solved the Linguistic in ${tries} tries! Come back in ${timeUntilMidnight}.`;
+    const message = `Congratulations! You solved the Linguistic in ${attempts} tries! Come back in ${timeUntilMidnight}.`;
 
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
@@ -116,7 +114,7 @@ function showCongratulations(attempts) {
 
     // Creating the message text with a line break
     const messageText = document.createElement('span');
-    messageText.innerHTML = `Congratulations!<br>You solved the Linduistic in ${tries} attempt(s)!<br>Come back in ${timeUntilMidnight}.<br>`;
+    messageText.innerHTML = `Congratulations!<br>You solved the Linduistic in ${attempts} attempt(s)!<br>Come back in ${timeUntilMidnight}.<br>`;
 
     const shareButton = document.createElement('button');
     shareButton.innerText = 'Share';
@@ -161,8 +159,6 @@ function setupGame() {
     initializeSymbolMapping();
     displaySentence();
     localStorage.setItem('lastPlayed', new Date().toDateString());
-
-    let tries = 0;
 }
 
 document.getElementById('checkButton').addEventListener('mousedown', function() {
