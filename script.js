@@ -90,16 +90,7 @@ function checkGuess() {
     let attempts = parseInt(localStorage.getItem('attempts') || '0');
 
 let countDown = document.getElementById('countDown');
-    let currentValue = parseInt(countDown.textContent, 10); // Get current value from the countdown box
-
-    if (currentValue > 0) {
-        currentValue--; // Decrement the number
-        countDown.textContent = currentValue; // Update the display
-    }
-
-
-
-
+    
     inputs.forEach((input, index) => {
         const guessedChar = input.value.trim().toLowerCase();
         const correctChar = currentSentence.toLowerCase().replace(/[^a-z]/gi, '')[index];
