@@ -89,7 +89,7 @@ function checkGuess() {
     const inputs = document.querySelectorAll('.guess-input');
     let attempts = parseInt(localStorage.getItem('attempts') || '0');
 
-    let countDown = document.getElementById('countDown');
+let countDown = document.getElementById('countDown');
     let currentValue = parseInt(countDown.textContent, 10); // Get current value from the countdown box
 
     if (currentValue > 0) {
@@ -126,8 +126,6 @@ function checkGuess() {
         localStorage.setItem('attempts', attempts.toString());
     }
 }
-
-document.getElementById('checkButton').addEventListener('click', checkGuess);
 
 function showFailureMessage() {
     const message = `You did not solve the Linduistic today! Answer was: ${currentSentence}`;
