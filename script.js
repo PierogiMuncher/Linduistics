@@ -248,4 +248,14 @@ const buttonImage = checkButton.children[0]; // assuming the image is the first 
 // });
 
 
+let countdown = 5; // Start the countdown at 5
+
+function updateCountdown() {
+    if (countdown > 0) {
+        countdown--; // Decrement the countdown
+        document.getElementById('countdownDisplay').textContent = countdown; // Update the display
+    }
+}
+
+
 window.onload = setupGame;
