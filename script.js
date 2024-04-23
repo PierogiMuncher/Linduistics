@@ -105,14 +105,10 @@ function checkGuess() {
     localStorage.setItem('tries', tries.toString());
 
     if (allCorrect) {
-        attempts++;
         localStorage.setItem('gameCompleted', 'true');
-        localStorage.setItem('attempts', attempts.toString());
         showCongratulations(tries);
     } else if (tries >= 5) {
         showFailureMessage();
-    } else {
-        localStorage.setItem('attempts', attempts.toString());
     }
 }
 
@@ -201,19 +197,19 @@ function setupGame() {
     localStorage.setItem('lastPlayed', new Date().toDateString());
 }
 
-// document.getElementById('checkButton').addEventListener('mousedown', function() {
-//     this.children[0].src = 'ButtonDown.svg';  // Change to the "pressed" image
-//     // Play the button press sound
-//     document.getElementById('buttonPressAudio').play();
-// });
+document.getElementById('checkButton').addEventListener('mousedown', function() {
+    this.children[0].src = 'ButtonDown.svg';  // Change to the "pressed" image
+    // Play the button press sound
+    document.getElementById('buttonPressAudio').play();
+});
 
-// document.getElementById('checkButton').addEventListener('mouseup', function() {
-//     this.children[0].src = 'ButtonUp.svg';  // Change back to the "unpressed" image
-// });
+document.getElementById('checkButton').addEventListener('mouseup', function() {
+    this.children[0].src = 'ButtonUp.svg';  // Change back to the "unpressed" image
+});
 
-// document.getElementById('checkButton').addEventListener('mouseleave', function() {
-//     this.children[0].src = 'ButtonUp.svg';  // Ensure it reverts if cursor leaves while pressed
-// });
+document.getElementById('checkButton').addEventListener('mouseleave', function() {
+    this.children[0].src = 'ButtonUp.svg';  // Ensure it reverts if cursor leaves while pressed
+});
 
 const checkButton = document.getElementById('checkButton');
 const buttonImage = checkButton.children[0]; // assuming the image is the first child
