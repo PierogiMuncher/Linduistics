@@ -140,7 +140,7 @@ function isNewDay() {
 
 function showCongratulations(attempts) {
     const timeUntilMidnight = getTimeUntilMidnight();
-    const message = `Congratulations! You solved the Linguistic in ${attempts} tries! Come back in ${timeUntilMidnight}.`;
+    const message = `Congratulations! You solved the Linduistic in ${attempts} tries! Come back in ${timeUntilMidnight}.`;
 
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
@@ -197,22 +197,22 @@ function setupGame() {
     localStorage.setItem('lastPlayed', new Date().toDateString());
 }
 
-document.getElementById('checkButton').addEventListener('mousedown', function() {
-    this.children[0].src = 'ButtonDown.svg';  // Change to the "pressed" image
-    // Play the button press sound
-    document.getElementById('buttonPressAudio').play();
-});
+// document.getElementById('checkButton').addEventListener('mousedown', function() {
+//     this.children[0].src = 'ButtonDown.svg';  // Change to the "pressed" image
+//     // Play the button press sound
+//     document.getElementById('buttonPressAudio').play();
+// });
 
-document.getElementById('checkButton').addEventListener('mouseup', function() {
-    this.children[0].src = 'ButtonUp.svg';  // Change back to the "unpressed" image
-});
+// document.getElementById('checkButton').addEventListener('mouseup', function() {
+//     this.children[0].src = 'ButtonUp.svg';  // Change back to the "unpressed" image
+// });
 
-document.getElementById('checkButton').addEventListener('mouseleave', function() {
-    this.children[0].src = 'ButtonUp.svg';  // Ensure it reverts if cursor leaves while pressed
-});
+// document.getElementById('checkButton').addEventListener('mouseleave', function() {
+//     this.children[0].src = 'ButtonUp.svg';  // Ensure it reverts if cursor leaves while pressed
+// });
 
-const checkButton = document.getElementById('checkButton');
-const buttonImage = checkButton.children[0]; // assuming the image is the first child
+// const checkButton = document.getElementById('checkButton');
+// const buttonImage = checkButton.children[0]; // assuming the image is the first child
 
 // Function to change to the "pressed" image
 function pressButton() {
