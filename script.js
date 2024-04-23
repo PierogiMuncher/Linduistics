@@ -253,7 +253,7 @@ let countdown = 5; // Start the countdown at 5
 function updateCountdown() {
     if (countdown > 0) {
         countdown--; // Decrement the countdown
-        document.getElementById('countdownDisplay').textContent = countdown; // Update the display
+        document.getElementById('countDown').textContent = countdown; // Update the display
     }
 }
 
