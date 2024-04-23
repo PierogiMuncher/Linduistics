@@ -197,39 +197,39 @@ function setupGame() {
     localStorage.setItem('lastPlayed', new Date().toDateString());
 }
 
-// document.getElementById('checkButton').addEventListener('mousedown', function() {
-//     this.children[0].src = 'ButtonDown.svg';  // Change to the "pressed" image
-//     // Play the button press sound
-//     document.getElementById('buttonPressAudio').play();
-// });
+document.getElementById('checkButton').addEventListener('mousedown', function() {
+    this.children[0].src = 'ButtonDown.svg';  // Change to the "pressed" image
+    // Play the button press sound
+    document.getElementById('buttonPressAudio').play();
+});
 
-// document.getElementById('checkButton').addEventListener('mouseup', function() {
-//     this.children[0].src = 'ButtonUp.svg';  // Change back to the "unpressed" image
-// });
+document.getElementById('checkButton').addEventListener('mouseup', function() {
+    this.children[0].src = 'ButtonUp.svg';  // Change back to the "unpressed" image
+});
 
-// document.getElementById('checkButton').addEventListener('mouseleave', function() {
-//     this.children[0].src = 'ButtonUp.svg';  // Ensure it reverts if cursor leaves while pressed
-// });
+document.getElementById('checkButton').addEventListener('mouseleave', function() {
+    this.children[0].src = 'ButtonUp.svg';  // Ensure it reverts if cursor leaves while pressed
+});
 
-// const checkButton = document.getElementById('checkButton');
-// const buttonImage = checkButton.children[0]; // assuming the image is the first child
+const checkButton = document.getElementById('checkButton');
+const buttonImage = checkButton.children[0]; // assuming the image is the first child
 
-// Function to change to the "pressed" image
-function pressButton() {
-    buttonImage.src = 'ButtonDown.svg';
-    document.getElementById('buttonPressAudio').play();  // Play the button press sound
-}
+// // Function to change to the "pressed" image
+// function pressButton() {
+//     buttonImage.src = 'ButtonDown.svg';
+//     document.getElementById('buttonPressAudio').play();  // Play the button press sound
+// }
 
-// Function to revert to the "unpressed" image
-function releaseButton() {
-    buttonImage.src = 'ButtonUp.svg';
-    checkGuess();
-}
+// // Function to revert to the "unpressed" image
+// function releaseButton() {
+//     buttonImage.src = 'ButtonUp.svg';
+//     checkGuess();
+// }
 
-// Add mouse event listeners
-checkButton.addEventListener('mousedown', pressButton);
-checkButton.addEventListener('mouseup', releaseButton);
-checkButton.addEventListener('mouseleave', releaseButton);
+// // Add mouse event listeners
+// checkButton.addEventListener('mousedown', pressButton);
+// checkButton.addEventListener('mouseup', releaseButton);
+// checkButton.addEventListener('mouseleave', releaseButton);
 
 // // Add touch event listeners for mobile devices
 // checkButton.addEventListener('touchstart', function(event) {
