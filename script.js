@@ -132,9 +132,10 @@ function showFailureMessage() {
 function isNewDay() {
     const lastPlayed = localStorage.getItem('lastPlayed');
     const today = new Date().toDateString();
-
+    
     if (lastPlayed !== today) {
         return true;
+        localStorage.setItem('gameLocked', 'false');
     }
     return false;
 }
