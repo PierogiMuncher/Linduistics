@@ -1,10 +1,8 @@
 const sentences = [
-"Sadie from the TV show awkward."
+    "Sadie from the TV show awkward."
 ];
 const symbols = Array.from({length: 26}, (_, i) => `symbols/${i + 1}.svg`);
 let currentSentence = '';
-let attempts = 0;
-let symbolMapping = {};
 let tries = 0;
 
 function initializeSymbolMapping() {
@@ -24,9 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeGame() {
     if (localStorage.getItem('gameCompleted') === 'true' || localStorage.getItem('gameLocked') === 'true') {
-        let attempts = localStorage.getItem('tries');
+        let tries = localStorage.getItem('tries');
         if (localStorage.getItem('gameCompleted') === 'true') {
-            showCongratulations(attempts);
+            showCongratulations(tries);
         } else {
             showFailureMessage();
         }
@@ -48,7 +46,7 @@ function displaySentence() {
         wordBox.style.display = 'inline-block';
         wordBox.style.padding = '5px';
 
-        const inputs = []; // Store references to input elements
+        const inputs = [];
 
         word.split('').forEach(char => {
             const symbolContainer = document.createElement('div');
@@ -71,60 +69,51 @@ function displaySentence() {
 
         gameBoard.appendChild(wordBox);
 
-        // Set up the input focus movement
         inputs.forEach((input, index) => {
             input.addEventListener('input', () => {
                 if (input.value && index < inputs.length - 1) {
-                    inputs[index + 1].focus(); // Move focus to next input
+                    inputs[index + 1].focus();
                 }
             });
         });
     });
 }
-let lastGuessTime = 0;
+
+let debounceTimer;
 function checkGuess() {
-    const now = Date.now();
-    if (now - lastGuessTime < 1000) return; // Prevents function from running if last run was less than 1 second ago
-    lastGuessTime = now;
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        let tries = parseInt(localStorage.getItem('tries') || '0');
+        tries++;
+        let allCorrect = true;
+        const inputs = document.querySelectorAll('.guess-input');
 
-    let tries = parseInt(localStorage.getItem('tries') || '0');
-    tries++;
-    let allCorrect = true;
-    const inputs = document.querySelectorAll('.guess-input');
-    let attempts = parseInt(localStorage.getItem('attempts') || '0');
+        inputs.forEach((input, index) => {
+            const guessedChar = input.value.trim().toLowerCase();
+            const correctChar = currentSentence.toLowerCase().replace(/[^a-z]/gi, '')[index];
 
-let countDown = document.getElementById('countDown');
-    
-    inputs.forEach((input, index) => {
-        const guessedChar = input.value.trim().toLowerCase();
-        const correctChar = currentSentence.toLowerCase().replace(/[^a-z]/gi, '')[index];
+            if (guessedChar === correctChar) {
+                input.style.backgroundColor = 'pink';
+                input.disabled = true;
+            } else {
+                input.style.backgroundColor = '';
+                allCorrect = false;
+            }
+        });
 
-        if (guessedChar === correctChar) {
-            input.style.backgroundColor = 'pink';
-            input.disabled = true; // Lock the input box if correct
-        } else {
-            input.style.backgroundColor = '';
-            allCorrect = false;
+        localStorage.setItem('tries', tries.toString());
+
+        if (allCorrect) {
+            localStorage.setItem('gameCompleted', 'true');
+            showCongratulations(tries);
+        } else if (tries >= 5) {
+            showFailureMessage();
         }
-    });
-
-    localStorage.setItem('tries', tries.toString());
-
-    if (allCorrect) {
-        attempts++;
-        localStorage.setItem('gameCompleted', 'true');
-        localStorage.setItem('attempts', attempts.toString());
-        showCongratulations(tries);
-    } else if (tries >= 5) {
-        showFailureMessage();
-    } else {
-        localStorage.setItem('attempts', attempts.toString());
-    }
+    }, 300);
 }
 
 function showFailureMessage() {
     const message = `You did not solve the Linduistic today! Answer was: ${currentSentence}`;
-
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
 
@@ -141,32 +130,26 @@ function showFailureMessage() {
 function isNewDay() {
     const lastPlayed = localStorage.getItem('lastPlayed');
     const today = new Date().toDateString();
-
-    if (lastPlayed !== today) {
-        return true;
-    }
-    return false;
+    return lastPlayed !== today;
 }
 
-function showCongratulations(attempts) {
+function showCongratulations(tries) {
     const timeUntilMidnight = getTimeUntilMidnight();
-    const message = `Congratulations! You solved the Linguistic in ${attempts} tries! Come back in ${timeUntilMidnight}.`;
+    const message = `Congratulations! You solved the Linguistic in ${tries} tries! Come back in ${timeUntilMidnight}.`;
 
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
 
     const messageBox = document.createElement('div');
     messageBox.className = 'message-box';
-
-    // Creating the message text with a line break
     const messageText = document.createElement('span');
-    messageText.innerHTML = `Congratulations!<br>You solved the Linduistic in ${attempts} attempt(s)!<br>Come back in ${timeUntilMidnight}.<br>`;
+    messageText.innerHTML = `Congratulations!<br>You solved the Linduistic in ${tries} attempt(s)!<br>Come back in ${timeUntilMidnight}.<br>`;
 
     const shareButton = document.createElement('button');
     shareButton.innerText = 'Share';
     shareButton.className = 'share-button';
     shareButton.onclick = function() {
-        const shareText = `I just solved the Linduistic in ${attempts} attempt(s)! 💖 Try it yourself: www.linduistics.com`;
+        const shareText = `I just solved the Linduisticin ${attempts} attempt(s)! 💖 Try it yourself: www.linduistics.com`;
         if (navigator.share) {
             navigator.share({
                 title: 'My Linduistic Achievement',
@@ -183,7 +166,6 @@ function showCongratulations(attempts) {
     document.body.appendChild(overlay);
 }
 
-
 function getTimeUntilMidnight() {
     const now = new Date();
     const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
@@ -195,7 +177,7 @@ function getTimeUntilMidnight() {
 
 function clearGameData() {
     localStorage.removeItem('gameCompleted');
-    localStorage.removeItem('attempts');
+    localStorage.removeItem('tries');
     localStorage.removeItem('lastPlayed');
     setupGame();
 }
@@ -220,73 +202,5 @@ document.getElementById('checkButton').addEventListener('mouseup', function() {
 document.getElementById('checkButton').addEventListener('mouseleave', function() {
     this.children[0].src = 'ButtonUp.svg';  // Ensure it reverts if cursor leaves while pressed
 });
-
-
-
-
-const checkButton = document.getElementById('checkButton');
-const buttonImage = checkButton.children[0]; // assuming the image is the first child
-
-// Function to change to the "pressed" image
-function pressButton() {
-    buttonImage.src = 'ButtonDown.svg';
-    document.getElementById('buttonPressAudio').play();  // Play the button press sound
-}
-
-// Function to revert to the "unpressed" image
-function releaseButton() {
-    buttonImage.src = 'ButtonUp.svg';
-    checkGuess();
-}
-
-// Add mouse event listeners
-checkButton.addEventListener('mousedown', pressButton);
-checkButton.addEventListener('mouseup', releaseButton);
-checkButton.addEventListener('mouseleave', releaseButton);
-
-// Add touch event listeners for mobile devices
-checkButton.addEventListener('touchstart', function(event) {
-    event.preventDefault(); // Prevents the mouse event from also being fired
-    event.stopPropagation();
-    pressButton();
-}, {passive: false});
-
-checkButton.addEventListener('touchend', function(event) {
-    event.preventDefault(); // Prevents the mouse event from also being fired
-    releaseButton();
-    event.stopPropagation();
-}, {passive: false});
-
-checkButton.addEventListener('touchcancel', function(event) {
-    event.preventDefault(); // Prevents the mouse event from also being fired
-    releaseButton();
-});
-
-let countdown = 5;
-
-function updateCountdown() {
-    const countDownElement = document.getElementById('countDown');
-    countDownElement.textContent = countdown;
-    countdown--;
-
-    if (countdown < 0) {
-        showFailureMessage();
-        lockGame();
-    }
-}
-
-function lockGame() {
-    document.querySelectorAll('.guess-input').forEach(input => {
-        input.disabled = true; // Disable all input fields
-    });
-    localStorage.setItem('gameLocked', 'true'); // Lock the game until the next day
-}
-
-document.getElementById('checkButton').addEventListener('click', function() {
-    updateCountdown();
-    checkGuess();
-});
-
-
 
 window.onload = setupGame;
