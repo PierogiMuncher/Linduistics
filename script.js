@@ -85,6 +85,7 @@ function displaySentence() {
 function checkGuess() {
     let tries = parseInt(localStorage.getItem('tries') || '0');
     tries++;
+    updateCountdown();
     let allCorrect = true;
     const inputs = document.querySelectorAll('.guess-input');
     let attempts = parseInt(localStorage.getItem('attempts') || '0');
