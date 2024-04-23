@@ -81,8 +81,12 @@ function displaySentence() {
         });
     });
 }
-
+let lastGuessTime = 0;
 function checkGuess() {
+    const now = Date.now();
+    if (now - lastGuessTime < 1000) return; // Prevents function from running if last run was less than 1 second ago
+    lastGuessTime = now;
+
     let tries = parseInt(localStorage.getItem('tries') || '0');
     tries++;
     let allCorrect = true;
@@ -243,18 +247,46 @@ checkButton.addEventListener('mouseleave', releaseButton);
 // Add touch event listeners for mobile devices
 checkButton.addEventListener('touchstart', function(event) {
     event.preventDefault(); // Prevents the mouse event from also being fired
+    event.stopPropagation();
     pressButton();
-});
+}, {passive: false});
 
 checkButton.addEventListener('touchend', function(event) {
     event.preventDefault(); // Prevents the mouse event from also being fired
     releaseButton();
-});
+    event.stopPropagation();
+}, {passive: false});
 
 checkButton.addEventListener('touchcancel', function(event) {
     event.preventDefault(); // Prevents the mouse event from also being fired
     releaseButton();
 });
+
+let countdown = 5;
+
+function updateCountdown() {
+    const countDownElement = document.getElementById('countDown');
+    countDownElement.textContent = countdown;
+    countdown--;
+
+    if (countdown < 0) {
+        showFailureMessage();
+        lockGame();
+    }
+}
+
+function lockGame() {
+    document.querySelectorAll('.guess-input').forEach(input => {
+        input.disabled = true; // Disable all input fields
+    });
+    localStorage.setItem('gameLocked', 'true'); // Lock the game until the next day
+}
+
+document.getElementById('checkButton').addEventListener('click', function() {
+    updateCountdown();
+    checkGuess();
+});
+
 
 
 window.onload = setupGame;
