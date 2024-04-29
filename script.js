@@ -1,5 +1,5 @@
 const sentences = [
-"Patrick in Quantum Mechanics."
+"Bad bitches is the only thing that I like."
 ];
 const symbols = Array.from({length: 26}, (_, i) => `symbols/${i + 1}.svg`);
 let currentSentence = '';
