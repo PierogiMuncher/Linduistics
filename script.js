@@ -189,6 +189,8 @@ function clearGameData() {
     localStorage.removeItem('gameCompleted');
     localStorage.removeItem('attempts');
     localStorage.removeItem('lastPlayed');
+    let tries = 0;
+    let attempts = 0;
     setupGame();
 }
 
@@ -197,6 +199,7 @@ function setupGame() {
     initializeSymbolMapping();
     displaySentence();
     let tries = 0;
+    let attempts = 0;
     localStorage.setItem('lastPlayed', new Date().toDateString());
 }
 
