@@ -196,6 +196,7 @@ function setupGame() {
     currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
     initializeSymbolMapping();
     displaySentence();
+    let tries = 0;
     localStorage.setItem('lastPlayed', new Date().toDateString());
 }
 
