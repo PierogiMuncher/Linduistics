@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchSentences() {
-    fetch('https://raw.githubusercontent.com/yourusername/yourrepo/main/sentences.txt')
+    fetch('https://github.com/PierogiMuncher/Linduistics/blob/main/sentences.txt')
         .then(response => response.text())
         .then(data => {
             const lines = data.split('\n').filter(line => line.trim() !== ''); // Filter out empty lines
