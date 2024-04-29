@@ -136,6 +136,8 @@ function isNewDay() {
     if (lastPlayed !== today) {
         return true;
         localStorage.setItem('gameLocked', 'false');
+        localStorage.setItem('lastPlayed', today);
+        localStorage.setItem('tries', '0');
     }
     return false;
 }
@@ -189,8 +191,7 @@ function clearGameData() {
     localStorage.removeItem('gameCompleted');
     localStorage.removeItem('attempts');
     localStorage.removeItem('lastPlayed');
-    let tries = 0;
-    let attempts = 0;
+    localStorage.clear();
     setupGame();
 }
 
@@ -198,8 +199,7 @@ function setupGame() {
     currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
     initializeSymbolMapping();
     displaySentence();
-    let tries = 0;
-    let attempts = 0;
+    localStorage.setItem('tries', '0');
     localStorage.setItem('lastPlayed', new Date().toDateString());
 }
 
