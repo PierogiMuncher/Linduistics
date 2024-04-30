@@ -291,10 +291,17 @@ function updateCountdown() {
 document.addEventListener('DOMContentLoaded', function() {
     if (isNewDay() || !localStorage.getItem('sentences')) {
         fetchSentences(); // Fetch and setup game if it's a new day or no data is available
+        incrementSentenceIndex();
     } else {
         updateGameFromStoredSentences(); // Continue with stored sentences
     }
 });
+
+function incrementSentenceIndex() {
+    const lines = JSON.parse(localStorage.getItem('sentences') || '[]');
+    index = (index + 2) % lines.length; // Increment index to next pair and wrap around if needed
+    localStorage.setItem('sentenceIndex', index.toString());
+}
 
 function fetchSentences() {
     fetch('https://raw.githubusercontent.com/PierogiMuncher/Linduistics/main/sentences.txt')
@@ -309,16 +316,21 @@ function fetchSentences() {
 function updateGameFromStoredSentences() {
     const lines = JSON.parse(localStorage.getItem('sentences') || '[]');
     let index = parseInt(localStorage.getItem('sentenceIndex') || '0');
-    if (index >= lines.length - 1) index = 0; // Reset if index exceeds number of lines
+    // if (index >= lines.length - 1) index = 0; // Reset if index exceeds number of lines
+    if (index >= lines.length) {
+        index = 0;
+        localStorage.setItem('sentenceIndex', index.toString());
+    }
 
     const sentence = lines[index].trim();
     const hint = lines[index + 1].trim();
     
     document.querySelector('h4').textContent = "Today's hint: " + hint;
     initializeSymbolMapping();
-    displaySentence(sentence);
+    // displaySentence(sentence);
+    displaySentence();
     
-    localStorage.setItem('sentenceIndex', (index + 2).toString()); // Move to the next pair
+    // localStorage.setItem('sentenceIndex', (index + 2).toString()); // Move to the next pair
     localStorage.setItem('lastPlayed', new Date().toDateString());
 }
 
