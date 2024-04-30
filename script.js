@@ -299,6 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function incrementSentenceIndex() {
     const lines = JSON.parse(localStorage.getItem('sentences') || '[]');
+    let index = parseInt(localStorage.getItem('sentenceIndex') || '0');
     index = (index + 2) % lines.length; // Increment index to next pair and wrap around if needed
     localStorage.setItem('sentenceIndex', index.toString());
 }
