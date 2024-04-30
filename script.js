@@ -134,10 +134,10 @@ function isNewDay() {
     const today = new Date().toDateString();
     
     if (lastPlayed !== today) {
-        return true;
         localStorage.setItem('gameLocked', 'false');
         localStorage.setItem('lastPlayed', today);
         localStorage.setItem('tries', '0');
+        return true;
     }
     return false;
 }
@@ -291,7 +291,7 @@ function updateCountdown() {
 document.addEventListener('DOMContentLoaded', function() {
     if (isNewDay() || !localStorage.getItem('sentences')) {
         fetchSentences(); // Fetch and setup game if it's a new day or no data is available
-        incrementSentenceIndex();
+        // incrementSentenceIndex();
     } else {
         updateGameFromStoredSentences(); // Continue with stored sentences
     }
@@ -310,7 +310,11 @@ function fetchSentences() {
         .then(data => {
             const lines = data.split('\n').filter(line => line.trim() !== ''); // Filter out empty lines
             localStorage.setItem('sentences', JSON.stringify(lines));
+            incrementSentenceIndex(); // Increment index after new data is fetched
             updateGameFromStoredSentences();
+        })
+        .catch(error => {
+            console.error('Failed to fetch sentences:', error);
         });
 }
 
@@ -323,8 +327,9 @@ function updateGameFromStoredSentences() {
         localStorage.setItem('sentenceIndex', index.toString());
     }
 
-    const sentence = lines[index].trim();
-    const hint = lines[index + 1].trim();
+    currentSentence = lines[index].trim();
+    // const sentence = lines[index].trim();
+    // const hint = lines[index + 1].trim();
     
     document.querySelector('h4').textContent = "Today's hint: " + hint;
     initializeSymbolMapping();
@@ -332,7 +337,7 @@ function updateGameFromStoredSentences() {
     displaySentence();
     
     // localStorage.setItem('sentenceIndex', (index + 2).toString()); // Move to the next pair
-    localStorage.setItem('lastPlayed', new Date().toDateString());
+    // localStorage.setItem('lastPlayed', new Date().toDateString());
 }
 
 
