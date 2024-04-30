@@ -332,7 +332,7 @@ function updateGameFromStoredSentences() {
 
     currentSentence = lines[index].trim();
     // const sentence = lines[index].trim();
-    // const hint = lines[index + 1].trim();
+    const hint = lines[index + 1].trim();
     
     document.querySelector('h4').textContent = "Today's hint: " + hint;
     initializeSymbolMapping();
