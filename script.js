@@ -310,6 +310,9 @@ function fetchSentences() {
         .then(data => {
             const lines = data.split('\n').filter(line => line.trim() !== ''); // Filter out empty lines
             localStorage.setItem('sentences', JSON.stringify(lines));
+            if (!localStorage.getItem('sentenceIndex')) {
+                localStorage.setItem('sentenceIndex', '0');
+            }
             incrementSentenceIndex(); // Increment index after new data is fetched
             updateGameFromStoredSentences();
         })
