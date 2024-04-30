@@ -196,7 +196,14 @@ function clearGameData() {
 }
 
 function setupGame() {
-    currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
+
+    const lines = JSON.parse(localStorage.getItem('sentences') || '[]');
+    let index = parseInt(localStorage.getItem('sentenceIndex') || '0');
+    if (index >= lines.length - 1) index = 0; // Reset if index exceeds number of lines
+
+    currentSentence = lines[index].trim();
+
+    // currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
     initializeSymbolMapping();
     displaySentence();
     localStorage.setItem('tries', '0');
@@ -290,7 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchSentences() {
-    fetch('https://github.com/PierogiMuncher/Linduistics/blob/main/sentences.txt')
+    fetch('https://raw.githubusercontent.com/PierogiMuncher/Linduistics/main/sentences.txt')
         .then(response => response.text())
         .then(data => {
             const lines = data.split('\n').filter(line => line.trim() !== ''); // Filter out empty lines
