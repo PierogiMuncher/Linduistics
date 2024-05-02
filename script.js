@@ -310,10 +310,13 @@ function fetchSentences() {
         .then(data => {
             const lines = data.split('\n').filter(line => line.trim() !== ''); // Filter out empty lines
             localStorage.setItem('sentences', JSON.stringify(lines));
+            if (isNewDay()) {  // Ensure it's a new day before incrementing
+                incrementSentenceIndex();
+            }
             if (!localStorage.getItem('sentenceIndex')) {
                 localStorage.setItem('sentenceIndex', '0');
             }
-            incrementSentenceIndex(); // Increment index after new data is fetched
+            // incrementSentenceIndex(); // Increment index after new data is fetched
             updateGameFromStoredSentences();
         })
         .catch(error => {
