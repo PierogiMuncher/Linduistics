@@ -199,13 +199,27 @@ function setupGame() {
 
     const lines = JSON.parse(localStorage.getItem('sentences') || '[]');
     let index = parseInt(localStorage.getItem('sentenceIndex') || '0');
-    if (index >= lines.length - 1) index = 0; // Reset if index exceeds number of lines
+    // if (index >= lines.length - 1) index = 0; // Reset if index exceeds number of lines
 
-    currentSentence = lines[index].trim();
+    // Check if index is within the range of lines array
+    if (index >= lines.length) {
+        console.error("Index is out of bounds:", index);
+        index = 0;  // Reset index or handle error appropriately
+        localStorage.setItem('sentenceIndex', index.toString());
+    }
+
+    // Safely access the sentence and hint
+    const sentence = lines[index] ? lines[index].trim() : "Default sentence";
+    const hint = lines[index + 1] ? lines[index + 1].trim() : "Default hint";
+
+    // currentSentence = lines[index].trim();
 
     // currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
     initializeSymbolMapping();
     displaySentence();
+    
+    document.querySelector('h4').textContent = "Today's hint: " + hint;
+    currentSentence = sentence;
     localStorage.setItem('tries', '0');
     localStorage.setItem('lastPlayed', new Date().toDateString());
 }
