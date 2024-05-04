@@ -134,10 +134,10 @@ function isNewDay() {
     const today = new Date().toDateString();
     
     if (lastPlayed !== today) {
-        return true;
         localStorage.setItem('gameLocked', 'false');
         localStorage.setItem('lastPlayed', today);
         localStorage.setItem('tries', '0');
+        return true;
     }
     return false;
 }
@@ -196,9 +196,30 @@ function clearGameData() {
 }
 
 function setupGame() {
-    currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
+
+    const lines = JSON.parse(localStorage.getItem('sentences') || '[]');
+    let index = parseInt(localStorage.getItem('sentenceIndex') || '0');
+    // if (index >= lines.length - 1) index = 0; // Reset if index exceeds number of lines
+
+    // Check if index is within the range of lines array
+    if (index >= lines.length) {
+        console.error("Index is out of bounds:", index);
+        index = 0;  // Reset index or handle error appropriately
+        localStorage.setItem('sentenceIndex', index.toString());
+    }
+
+    // Safely access the sentence and hint
+    const sentence = lines[index] ? lines[index].trim() : "Default sentence";
+    const hint = lines[index + 1] ? lines[index + 1].trim() : "Default hint";
+
+    // currentSentence = lines[index].trim();
+
+    // currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
     initializeSymbolMapping();
     displaySentence();
+    
+    document.querySelector('h4').textContent = "Today's hint: " + hint;
+    currentSentence = sentence;
     localStorage.setItem('tries', '0');
     localStorage.setItem('lastPlayed', new Date().toDateString());
 }
@@ -284,35 +305,59 @@ function updateCountdown() {
 document.addEventListener('DOMContentLoaded', function() {
     if (isNewDay() || !localStorage.getItem('sentences')) {
         fetchSentences(); // Fetch and setup game if it's a new day or no data is available
+        // incrementSentenceIndex();
     } else {
         updateGameFromStoredSentences(); // Continue with stored sentences
     }
 });
 
+function incrementSentenceIndex() {
+    const lines = JSON.parse(localStorage.getItem('sentences') || '[]');
+    let index = parseInt(localStorage.getItem('sentenceIndex') || '0');
+    index = (index + 2) % lines.length; // Increment index to next pair and wrap around if needed
+    localStorage.setItem('sentenceIndex', index.toString());
+}
+
 function fetchSentences() {
-    fetch('https://github.com/PierogiMuncher/Linduistics/blob/main/sentences.txt')
+    fetch('https://raw.githubusercontent.com/PierogiMuncher/Linduistics/main/sentences.txt')
         .then(response => response.text())
         .then(data => {
             const lines = data.split('\n').filter(line => line.trim() !== ''); // Filter out empty lines
             localStorage.setItem('sentences', JSON.stringify(lines));
+            if (isNewDay()) {  // Ensure it's a new day before incrementing
+                incrementSentenceIndex();
+            }
+            if (!localStorage.getItem('sentenceIndex')) {
+                localStorage.setItem('sentenceIndex', '0');
+            }
+            // incrementSentenceIndex(); // Increment index after new data is fetched
             updateGameFromStoredSentences();
+        })
+        .catch(error => {
+            console.error('Failed to fetch sentences:', error);
         });
 }
 
 function updateGameFromStoredSentences() {
     const lines = JSON.parse(localStorage.getItem('sentences') || '[]');
     let index = parseInt(localStorage.getItem('sentenceIndex') || '0');
-    if (index >= lines.length - 1) index = 0; // Reset if index exceeds number of lines
+    // if (index >= lines.length - 1) index = 0; // Reset if index exceeds number of lines
+    if (index >= lines.length) {
+        index = 0;
+        localStorage.setItem('sentenceIndex', index.toString());
+    }
 
-    const sentence = lines[index].trim();
+    currentSentence = lines[index].trim();
+    // const sentence = lines[index].trim();
     const hint = lines[index + 1].trim();
     
     document.querySelector('h4').textContent = "Today's hint: " + hint;
     initializeSymbolMapping();
-    displaySentence(sentence);
+    // displaySentence(sentence);
+    displaySentence();
     
-    localStorage.setItem('sentenceIndex', (index + 2).toString()); // Move to the next pair
-    localStorage.setItem('lastPlayed', new Date().toDateString());
+    // localStorage.setItem('sentenceIndex', (index + 2).toString()); // Move to the next pair
+    // localStorage.setItem('lastPlayed', new Date().toDateString());
 }
 
 
