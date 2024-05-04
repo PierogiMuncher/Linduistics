@@ -111,6 +111,18 @@ function checkGuess() {
     } else if (tries >= 5) {
         showFailureMessage();
     }
+    // Trigger the jiggle animation on all symbols
+    const symbols = document.querySelectorAll('.symbol');
+    symbols.forEach(symbol => {
+        symbol.classList.add('symbol-jiggle');
+    });
+
+    // Remove the jiggle class after half a second to allow retriggering
+    setTimeout(() => {
+        symbols.forEach(symbol => {
+            symbol.classList.remove('symbol-jiggle');
+        });
+    }, 500); // Matches the animation duration
 }
 
 function showFailureMessage() {
