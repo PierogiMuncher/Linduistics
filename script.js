@@ -119,13 +119,26 @@ function setupInputListeners() {
 // }
 
 function updateAllMatchingInputs(char, value) {
+    // Fetch all input elements that have the data-symbol matching 'char'
     const inputs = document.querySelectorAll(`input[data-symbol='${char}']`);
+    // Retrieve the correct sequence of characters from currentSentence to compare against
+    const filteredSentence = currentSentence.toLowerCase().replace(/[^a-z]/g, '');
+
     inputs.forEach(input => {
-        input.value = value; // Update the value
-        const correctChar = currentSentence.toLowerCase()[Array.from(input.parentNode.parentNode.children).indexOf(input.parentNode)];
-        input.style.backgroundColor = (value === correctChar) ? 'pink' : 'white'; // Highlight if correct
+        // Update the value of the input
+        input.value = value;
+        // Find the correct character based on the absolute index of this input in the context of all inputs
+        const allInputs = document.querySelectorAll('.guess-input');
+        const index = Array.from(allInputs).indexOf(input);
+        const correctChar = filteredSentence[index];  // Get the correct character based on index
+
+        // Set background color based on correctness
+        input.style.backgroundColor = (value === correctChar) ? 'pink' : 'white';
+        // Optionally disable the input if the value is correct
+        input.disabled = (value === correctChar);
     });
 }
+
 
 
 function checkGuess() {
