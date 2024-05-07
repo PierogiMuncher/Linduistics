@@ -62,6 +62,7 @@ function displaySentence() {
             input.type = 'text';
             input.className = 'guess-input';
             input.maxLength = 1;
+            input.dataset.symbol = char;
 
             symbolContainer.appendChild(img);
             symbolContainer.appendChild(input);
@@ -83,27 +84,49 @@ function displaySentence() {
     setupInputListeners();
 }
 
+// function setupInputListeners() {
+//     const inputs = document.querySelectorAll('.guess-input');
+//     inputs.forEach(input => {
+//         input.addEventListener('input', function() {
+//             const char = input.dataset.symbol;  // Get the character this input represents
+//             const value = input.value.trim().toLowerCase();
+//             updateAllMatchingInputs(char, value);  // Update all inputs that match the character
+//         });
+//     });
+// }
+
 function setupInputListeners() {
     const inputs = document.querySelectorAll('.guess-input');
     inputs.forEach(input => {
         input.addEventListener('input', function() {
-            const char = input.dataset.symbol;  // Get the character this input represents
-            const value = input.value.trim().toLowerCase();
-            updateAllMatchingInputs(char, value);  // Update all inputs that match the character
+            if (input.value) {  // Check if there is a value before proceeding
+                updateAllMatchingInputs(input.dataset.symbol, input.value.trim().toLowerCase());
+            }
         });
     });
 }
 
+
+// function updateAllMatchingInputs(char, value) {
+//     const inputs = document.querySelectorAll(`input[data-symbol='${char}']`);
+//     inputs.forEach(input => {
+//         input.value = value;  // Update the value
+//         const index = Array.from(input.parentNode.parentNode.children).indexOf(input.parentNode);
+//         const correctChar = currentSentence.toLowerCase().replace(/[^a-z]/gi, '')[index];
+//         input.style.backgroundColor = value === correctChar ? 'pink' : '';
+//         input.disabled = value === correctChar; // Optionally disable input if correct
+//     });
+// }
+
 function updateAllMatchingInputs(char, value) {
     const inputs = document.querySelectorAll(`input[data-symbol='${char}']`);
     inputs.forEach(input => {
-        input.value = value;  // Update the value
-        const index = Array.from(input.parentNode.parentNode.children).indexOf(input.parentNode);
-        const correctChar = currentSentence.toLowerCase().replace(/[^a-z]/gi, '')[index];
-        input.style.backgroundColor = value === correctChar ? 'pink' : '';
-        input.disabled = value === correctChar; // Optionally disable input if correct
+        input.value = value; // Update the value
+        const correctChar = currentSentence.toLowerCase()[Array.from(input.parentNode.parentNode.children).indexOf(input.parentNode)];
+        input.style.backgroundColor = (value === correctChar) ? 'pink' : 'white'; // Highlight if correct
     });
 }
+
 
 function checkGuess() {
     let tries = parseInt(localStorage.getItem('tries') || '0');
