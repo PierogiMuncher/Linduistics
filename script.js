@@ -38,12 +38,17 @@ function initializeGame() {
 function displaySentence() {
     const gameBoard = document.getElementById('gameBoard');
     gameBoard.innerHTML = '';
-    currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
     const words = currentSentence.toLowerCase().match(/\b[a-z]+\b/g);
 
     words.forEach(word => {
         const wordBox = document.createElement('div');
         wordBox.className = 'word-box';
+        wordBox.style.border = '1px solid black';
+        wordBox.style.margin = '5px';
+        wordBox.style.display = 'inline-block';
+        wordBox.style.padding = '5px';
+
+        const inputs = []; // Store references to input elements
 
         word.split('').forEach(char => {
             const symbolContainer = document.createElement('div');
@@ -57,99 +62,48 @@ function displaySentence() {
             input.type = 'text';
             input.className = 'guess-input';
             input.maxLength = 1;
-            input.dataset.symbol = char;  // Attach the character data to the input
 
             symbolContainer.appendChild(img);
             symbolContainer.appendChild(input);
             wordBox.appendChild(symbolContainer);
+            inputs.push(input);
         });
 
         gameBoard.appendChild(wordBox);
+
+        // Set up the input focus movement
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                if (input.value && index < inputs.length - 1) {
+                    inputs[index + 1].focus(); // Move focus to next input
+                }
+            });
+        });
     });
     setupInputListeners();
 }
-
-
-function updateAllMatchingInputs(char, value) {
-    const inputs = document.querySelectorAll(`input[data-symbol='${char}']`);
-    inputs.forEach(input => {
-        input.value = value; // Update the value
-        const correctChar = currentSentence.toLowerCase()[Array.from(input.parentNode.parentNode.children).indexOf(input.parentNode)];
-        input.style.backgroundColor = (value === correctChar) ? 'pink' : 'white'; // Highlight if correct
-    });
-}
-
-
-// function displaySentence() {
-//     const gameBoard = document.getElementById('gameBoard');
-//     gameBoard.innerHTML = '';
-//     const words = currentSentence.toLowerCase().match(/\b[a-z]+\b/g);
-
-//     words.forEach(word => {
-//         const wordBox = document.createElement('div');
-//         wordBox.className = 'word-box';
-//         wordBox.style.border = '1px solid black';
-//         wordBox.style.margin = '5px';
-//         wordBox.style.display = 'inline-block';
-//         wordBox.style.padding = '5px';
-
-//         const inputs = []; // Store references to input elements
-
-//         word.split('').forEach(char => {
-//             const symbolContainer = document.createElement('div');
-//             symbolContainer.className = 'symbol-container';
-
-//             const img = document.createElement('img');
-//             img.src = symbolMapping[char];
-//             img.className = 'symbol';
-
-//             const input = document.createElement('input');
-//             input.type = 'text';
-//             input.className = 'guess-input';
-//             input.maxLength = 1;
-
-//             symbolContainer.appendChild(img);
-//             symbolContainer.appendChild(input);
-//             wordBox.appendChild(symbolContainer);
-//             inputs.push(input);
-//         });
-
-//         gameBoard.appendChild(wordBox);
-
-//         // Set up the input focus movement
-//         inputs.forEach((input, index) => {
-//             input.addEventListener('input', () => {
-//                 if (input.value && index < inputs.length - 1) {
-//                     inputs[index + 1].focus(); // Move focus to next input
-//                 }
-//             });
-//         });
-//     });
-//     setupInputListeners();
-// }
 
 function setupInputListeners() {
     const inputs = document.querySelectorAll('.guess-input');
     inputs.forEach(input => {
         input.addEventListener('input', function() {
-            if (input.value) {  // Check if there is a value before proceeding
-                updateAllMatchingInputs(input.dataset.symbol, input.value.trim().toLowerCase());
-            }
+            const char = input.dataset.symbol;  // Get the character this input represents
+            const value = input.value.trim().toLowerCase();
+            updateAllMatchingInputs(char, value);  // Update all inputs that match the character
         });
     });
 }
 
-
-// function updateAllMatchingInputs(char, value) {
-//     const inputs = document.querySelectorAll(`input[data-symbol='${char}']`);
-//     inputs.forEach(input => {
-//         input.value = value;  // Update the value
-//         const index = Array.from(input.parentNode.parentNode.children).indexOf(input.parentNode);
-//         const correctChar = currentSentence.toLowerCase().replace(/[^a-z]/gi, '')[index];
-//         input.style.backgroundColor = value === correctChar ? 'pink' : '';
-//         input.disabled = value === correctChar; // Optionally disable input if correct
-//     });
-// }
+function updateAllMatchingInputs(char, value) {
+    const inputs = document.querySelectorAll(`input[data-symbol='${char}']`);
+    inputs.forEach(input => {
+        input.value = value;  // Update the value
+        const index = Array.from(input.parentNode.parentNode.children).indexOf(input.parentNode);
+        const correctChar = currentSentence.toLowerCase().replace(/[^a-z]/gi, '')[index];
+        input.style.backgroundColor = value === correctChar ? 'pink' : '';
+        input.disabled = value === correctChar; // Optionally disable input if correct
+    });
+}
 
 function checkGuess() {
     let tries = parseInt(localStorage.getItem('tries') || '0');
@@ -276,57 +230,34 @@ function clearGameData() {
     setupGame();
 }
 
-// function setupGame() {
-
-//     const lines = JSON.parse(localStorage.getItem('sentences') || '[]');
-//     let index = parseInt(localStorage.getItem('sentenceIndex') || '0');
-//     // if (index >= lines.length - 1) index = 0; // Reset if index exceeds number of lines
-
-//     // Check if index is within the range of lines array
-//     if (index >= lines.length) {
-//         console.error("Index is out of bounds:", index);
-//         index = 0;  // Reset index or handle error appropriately
-//         localStorage.setItem('sentenceIndex', index.toString());
-//     }
-
-//     // Safely access the sentence and hint
-//     const sentence = lines[index] ? lines[index].trim() : "Default sentence";
-//     const hint = lines[index + 1] ? lines[index + 1].trim() : "Default hint";
-
-//     // currentSentence = lines[index].trim();
-
-//     // currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
-//     initializeSymbolMapping();
-//     displaySentence();
-
-//     document.querySelector('h4').textContent = "Today's hint: " + hint;
-//     currentSentence = sentence;
-//     localStorage.setItem('tries', '0');
-//     localStorage.setItem('lastPlayed', new Date().toDateString());
-// }
-
 function setupGame() {
-    let lines = JSON.parse(localStorage.getItem('sentences') || '[]');
-    if (lines.length === 0) {
-        fetchSentences(); // Fetch and setup if no sentences are available
-    } else {
-        initializeGameFromLines(); // Setup game with existing sentences
-    }
-}
 
-function initializeGameFromLines() {
+    const lines = JSON.parse(localStorage.getItem('sentences') || '[]');
     let index = parseInt(localStorage.getItem('sentenceIndex') || '0');
-    let lines = JSON.parse(localStorage.getItem('sentences'));
+    // if (index >= lines.length - 1) index = 0; // Reset if index exceeds number of lines
+
+    // Check if index is within the range of lines array
     if (index >= lines.length) {
-        index = 0; // Reset if index exceeds number of lines
+        console.error("Index is out of bounds:", index);
+        index = 0;  // Reset index or handle error appropriately
+        localStorage.setItem('sentenceIndex', index.toString());
     }
-    currentSentence = lines[index].trim();
-    document.querySelector('h4').textContent = "Today's hint: " + (lines[index + 1] ? lines[index + 1].trim() : "Default hint");
+
+    // Safely access the sentence and hint
+    const sentence = lines[index] ? lines[index].trim() : "Default sentence";
+    const hint = lines[index + 1] ? lines[index + 1].trim() : "Default hint";
+
+    // currentSentence = lines[index].trim();
+
+    // currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
     initializeSymbolMapping();
     displaySentence();
-    localStorage.setItem('sentenceIndex', index.toString());
-}
 
+    document.querySelector('h4').textContent = "Today's hint: " + hint;
+    currentSentence = sentence;
+    localStorage.setItem('tries', '0');
+    localStorage.setItem('lastPlayed', new Date().toDateString());
+}
 
 // document.getElementById('checkButton').addEventListener('mousedown', function() {
 //     this.children[0].src = 'ButtonDown.svg';  // Change to the "pressed" image
