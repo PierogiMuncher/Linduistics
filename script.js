@@ -95,14 +95,33 @@ function displaySentence() {
 //     });
 // }
 
+// function setupInputListeners() {
+//     const inputs = document.querySelectorAll('.guess-input');
+//     inputs.forEach(input => {
+//         input.addEventListener('input', function() {
+//             if (input.value) {  // Check if there is a value before proceeding
+//                 updateAllMatchingInputs(input.dataset.symbol, input.value.trim().toLowerCase());
+//             }
+//         });
+//     });
+// }
+
 function setupInputListeners() {
     const inputs = document.querySelectorAll('.guess-input');
     inputs.forEach(input => {
         input.addEventListener('input', function() {
-            if (input.value) {  // Check if there is a value before proceeding
-                updateAllMatchingInputs(input.dataset.symbol, input.value.trim().toLowerCase());
-            }
+            // We can still use this to enforce any non-validation logic if necessary
+            // For example, moving focus or updating the value of similarly marked inputs without validating them
+            propagateInputValue(input.dataset.symbol, input.value.trim().toLowerCase());
         });
+    });
+}
+
+function propagateInputValue(char, value) {
+    // Update all matching input values without validating them
+    const inputs = document.querySelectorAll(`input[data-symbol='${char}']`);
+    inputs.forEach(input => {
+        input.value = value;
     });
 }
 
@@ -141,48 +160,91 @@ function updateAllMatchingInputs(char, value) {
 
 
 
-function checkGuess() {
-    let tries = parseInt(localStorage.getItem('tries') || '0');
-    tries++;
-    updateCountdown();
-    let allCorrect = true;
-    const inputs = document.querySelectorAll('.guess-input');
-    let attempts = parseInt(localStorage.getItem('attempts') || '0');
+// function checkGuess() {
+//     let tries = parseInt(localStorage.getItem('tries') || '0');
+//     tries++;
+//     updateCountdown();
+//     let allCorrect = true;
+//     const inputs = document.querySelectorAll('.guess-input');
+//     let attempts = parseInt(localStorage.getItem('attempts') || '0');
 
+//     inputs.forEach((input, index) => {
+//         const guessedChar = input.value.trim().toLowerCase();
+//         const correctChar = currentSentence.toLowerCase().replace(/[^a-z]/gi, '')[index];
+
+//         if (guessedChar === correctChar) {
+//             input.style.backgroundColor = 'pink';
+//             input.disabled = true; // Lock the input box if correct
+//         } else {
+//             input.style.backgroundColor = '';
+//             allCorrect = false;
+//         }
+//     });
+
+//     localStorage.setItem('tries', tries.toString());
+
+//     if (allCorrect) {
+//         localStorage.setItem('gameCompleted', 'true');
+//         showCongratulations(tries);
+//     } else if (tries >= 5) {
+//         showFailureMessage();
+//     }
+//     // Trigger the jiggle animation on all symbols
+//     const symbols = document.querySelectorAll('.symbol');
+//     symbols.forEach(symbol => {
+//         symbol.classList.add('symbol-jiggle');
+//     });
+
+//     // Remove the jiggle class after half a second to allow retriggering
+//     setTimeout(() => {
+//         symbols.forEach(symbol => {
+//             symbol.classList.remove('symbol-jiggle');
+//         });
+//     }, 500); // Matches the animation duration
+// }
+
+document.getElementById('checkButton').addEventListener('click', function() {
+    checkGuess();
+});
+
+function checkGuess() {
+    const inputs = document.querySelectorAll('.guess-input');
+    let allCorrect = true;
+    const filteredSentence = currentSentence.toLowerCase().replace(/[^a-z]/g, '');
+    
     inputs.forEach((input, index) => {
         const guessedChar = input.value.trim().toLowerCase();
-        const correctChar = currentSentence.toLowerCase().replace(/[^a-z]/gi, '')[index];
+        const correctChar = filteredSentence[index];
 
         if (guessedChar === correctChar) {
             input.style.backgroundColor = 'pink';
-            input.disabled = true; // Lock the input box if correct
+            input.disabled = true; // Optionally lock the input box if correct
         } else {
-            input.style.backgroundColor = '';
+            input.style.backgroundColor = 'white';
             allCorrect = false;
         }
     });
 
-    localStorage.setItem('tries', tries.toString());
-
-    if (allCorrect) {
-        localStorage.setItem('gameCompleted', 'true');
-        showCongratulations(tries);
-    } else if (tries >= 5) {
-        showFailureMessage();
-    }
-    // Trigger the jiggle animation on all symbols
-    const symbols = document.querySelectorAll('.symbol');
-    symbols.forEach(symbol => {
-        symbol.classList.add('symbol-jiggle');
-    });
-
-    // Remove the jiggle class after half a second to allow retriggering
-    setTimeout(() => {
-        symbols.forEach(symbol => {
-            symbol.classList.remove('symbol-jiggle');
-        });
-    }, 500); // Matches the animation duration
+    updateGameStatus(allCorrect);
 }
+
+function updateGameStatus(allCorrect) {
+    if (allCorrect) {
+        showCongratulations();
+    } else {
+        incrementAttempts();
+    }
+}
+
+function incrementAttempts() {
+    attempts++;
+    localStorage.setItem('tries', attempts.toString());
+    if (attempts >= maxAttempts) {
+        showFailureMessage();
+        lockGame();
+    }
+}
+
 
 function showFailureMessage() {
     const message = `You did not solve the Linduistic today! Answer was: ${currentSentence}`;
