@@ -211,7 +211,7 @@ function checkGuess() {
     const inputs = document.querySelectorAll('.guess-input');
     let allCorrect = true;
     const filteredSentence = currentSentence.toLowerCase().replace(/[^a-z]/g, '');
-    
+
     inputs.forEach((input, index) => {
         const guessedChar = input.value.trim().toLowerCase();
         const correctChar = filteredSentence[index];
@@ -225,8 +225,22 @@ function checkGuess() {
         }
     });
 
-    updateGameStatus(allCorrect);
+    if (allCorrect) {
+        showCongratulations();
+        lockGame();  // Lock the game after winning
+    } else {
+        incrementAttempts();
+    }
 }
+
+function incrementAttempts() {
+    attempts++;
+    if (attempts >= maxAttempts) {
+        showFailureMessage();
+        lockGame();  // Lock the game after max attempts
+    }
+}
+
 
 function updateGameStatus(allCorrect) {
     if (allCorrect) {
@@ -236,13 +250,18 @@ function updateGameStatus(allCorrect) {
     }
 }
 
-function incrementAttempts() {
-    attempts++;
-    localStorage.setItem('tries', attempts.toString());
-    if (attempts >= maxAttempts) {
-        showFailureMessage();
-        lockGame();
-    }
+function lockGame() {
+    localStorage.setItem('gameLocked', 'true');  // Lock the game
+    disableInputs();  // Disable input fields to prevent further typing
+}
+
+function disableInputs() {
+    const inputs = document.querySelectorAll('.guess-input');
+    inputs.forEach(input => input.disabled = true);
+}
+
+function isGameLocked() {
+    return localStorage.getItem('gameLocked') === 'true';
 }
 
 
@@ -262,18 +281,45 @@ function showFailureMessage() {
     localStorage.setItem('gameLocked', 'true');
 }
 
+// function isNewDay() {
+//     const lastPlayed = localStorage.getItem('lastPlayed');
+//     const today = new Date().toDateString();
+    
+//     if (lastPlayed !== today) {
+//         localStorage.setItem('gameLocked', 'false');
+//         localStorage.setItem('lastPlayed', today);
+//         localStorage.setItem('tries', '0');
+//         return true;
+//     }
+//     return false;
+// }
+
 function isNewDay() {
     const lastPlayed = localStorage.getItem('lastPlayed');
     const today = new Date().toDateString();
-    
     if (lastPlayed !== today) {
-        localStorage.setItem('gameLocked', 'false');
         localStorage.setItem('lastPlayed', today);
-        localStorage.setItem('tries', '0');
         return true;
     }
     return false;
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (isGameLocked()) {
+        showLockState();
+    } else if (isNewDay()) {
+        clearGameData();
+        setupGame();
+    } else {
+        initializeGame();
+    }
+});
+
+function showLockState() {
+    showFailureMessage(); // or show a "Game Locked" message
+    disableInputs();      // Make sure inputs can't be used if the game is locked
+}
+
 
 function showCongratulations(attempts) {
     const timeUntilMidnight = getTimeUntilMidnight();
@@ -325,6 +371,7 @@ function clearGameData() {
     localStorage.removeItem('attempts');
     localStorage.removeItem('lastPlayed');
     localStorage.clear();
+    attempts = 0;
     setupGame();
 }
 
