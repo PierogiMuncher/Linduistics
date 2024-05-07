@@ -38,17 +38,12 @@ function initializeGame() {
 function displaySentence() {
     const gameBoard = document.getElementById('gameBoard');
     gameBoard.innerHTML = '';
+    currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
     const words = currentSentence.toLowerCase().match(/\b[a-z]+\b/g);
 
     words.forEach(word => {
         const wordBox = document.createElement('div');
         wordBox.className = 'word-box';
-        wordBox.style.border = '1px solid black';
-        wordBox.style.margin = '5px';
-        wordBox.style.display = 'inline-block';
-        wordBox.style.padding = '5px';
-
-        const inputs = []; // Store references to input elements
 
         word.split('').forEach(char => {
             const symbolContainer = document.createElement('div');
@@ -62,44 +57,28 @@ function displaySentence() {
             input.type = 'text';
             input.className = 'guess-input';
             input.maxLength = 1;
-            input.dataset.symbol = char; // Setting data-symbol attribute
+            input.dataset.symbol = char;  // Attach the character data to the input
 
             symbolContainer.appendChild(img);
             symbolContainer.appendChild(input);
             wordBox.appendChild(symbolContainer);
-            inputs.push(input);
         });
 
         gameBoard.appendChild(wordBox);
-
-        // Set up the input focus movement
-        inputs.forEach((input, index) => {
-            input.addEventListener('input', () => {
-                if (input.value && index < inputs.length - 1) {
-                    inputs[index + 1].focus(); // Move focus to next input
-                }
-                updateAllMatchingInputs(input.dataset.symbol, input.value.trim().toLowerCase()); // Update all matching inputs
-            });
-        });
     });
+    setupInputListeners();
 }
+
 
 function updateAllMatchingInputs(char, value) {
     const inputs = document.querySelectorAll(`input[data-symbol='${char}']`);
     inputs.forEach(input => {
-        input.value = value;  // Update the value
-        const parentDivs = input.closest('.word-box').children; // Get the parent container of inputs
-        const index = Array.from(parentDivs).findIndex(div => div.contains(input));
-        const correctChar = currentSentence.toLowerCase().replace(/[^a-z]/gi, '').charAt(index); // Correct character based on overall index
-
-        if (value === correctChar) {
-            input.style.backgroundColor = 'pink';
-            input.disabled = true; // Optionally disable input if correct
-        } else {
-            input.style.backgroundColor = '';
-        }
+        input.value = value; // Update the value
+        const correctChar = currentSentence.toLowerCase()[Array.from(input.parentNode.parentNode.children).indexOf(input.parentNode)];
+        input.style.backgroundColor = (value === correctChar) ? 'pink' : 'white'; // Highlight if correct
     });
 }
+
 
 // function displaySentence() {
 //     const gameBoard = document.getElementById('gameBoard');
@@ -153,12 +132,13 @@ function setupInputListeners() {
     const inputs = document.querySelectorAll('.guess-input');
     inputs.forEach(input => {
         input.addEventListener('input', function() {
-            const char = input.dataset.symbol;  // Get the character this input represents
-            const value = input.value.trim().toLowerCase();
-            updateAllMatchingInputs(char, value);  // Update all inputs that match the character
+            if (input.value) {  // Check if there is a value before proceeding
+                updateAllMatchingInputs(input.dataset.symbol, input.value.trim().toLowerCase());
+            }
         });
     });
 }
+
 
 // function updateAllMatchingInputs(char, value) {
 //     const inputs = document.querySelectorAll(`input[data-symbol='${char}']`);
